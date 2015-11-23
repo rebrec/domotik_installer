@@ -1,0 +1,29 @@
+pushd
+
+# configuration du module pour la generation de nombres aleatoires (necessite le paquet rng-tools)
+echo bcm2708-rng >> /etc/modules
+
+# installation des MAJ automatiques dans crontab
+echo "*/1 *	* * *	root	/bin/sh -c 'cd /home/pi/projets/domotik && /usr/bin/git pull origin master >> /tmp/update.log'" >> /etc/crontab
+
+# installation du depot github
+mkdir -p /home/pi/projets/domotik
+cd /home/pi/projets/domotik
+git clone https://github.com/rebrec/domotik.git
+
+# configuration de domotik
+cd /home/pi/projets/domotik/install
+sh install-supervisor.sh
+chmod +x post-merge
+cp post-merge ../.git/hooks/
+
+# configuration de sshd_config pour n'autoriser qu'une auth par clé publique
+
+
+# ajout de la clé publique de télem à /home/pi/.ssh/authorized_keys
+popd
+cat id_rsa_domotik.pub >> /home/pi/.ssh/authorized_keys
+
+
+# configuration de fail2ban ssh
+# rien a faire

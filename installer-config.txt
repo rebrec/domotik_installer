@@ -1,0 +1,9 @@
+packages=vim,openssh-server,fail2ban,raspi-copies-and-fills,rng-tools
+hostname=dkbbox
+rootpw=neverusethispassword
+ip_addr=dhcp
+ip_netmask=0.0.0.0
+ip_broadcast=0.0.0.0
+ip_gateway=0.0.0.0
+ip_nameservers=
+
