@@ -31,6 +31,4 @@ cd /boot
 mkdir -p /home/pi/.ssh/
 cat id_rsa_domotik.pub >> /home/pi/.ssh/authorized_keys
 
-
-# configuration de fail2ban ssh
-# rien a faire
+reboot
