@@ -1,4 +1,6 @@
-pushd
+# Ajout de l'utilisateur pi / raspbian
+useradd -m -p raspbian -s /bin/bash pi
+adduser pi sudo
 
 # configuration du module pour la generation de nombres aleatoires (necessite le paquet rng-tools)
 echo bcm2708-rng >> /etc/modules
@@ -7,21 +9,26 @@ echo bcm2708-rng >> /etc/modules
 echo "*/1 *	* * *	root	/bin/sh -c 'cd /home/pi/projets/domotik && /usr/bin/git pull origin master >> /tmp/update.log'" >> /etc/crontab
 
 # installation du depot github
-mkdir -p /home/pi/projets/domotik
-cd /home/pi/projets/domotik
+mkdir -p /home/pi/projets
+cd /home/pi/projets/
 git clone https://github.com/rebrec/domotik.git
 
 # configuration de domotik
 cd /home/pi/projets/domotik/install
-sh install-supervisor.sh
+sh install-supervisor.sh silent root
 chmod +x post-merge
 cp post-merge ../.git/hooks/
+
+# copie du fichier généré domotik.conf dans /etc/supervisor/conf.d/
+cp domotik.conf /etc/supervisor/conf.d/
+
 
 # configuration de sshd_config pour n'autoriser qu'une auth par clé publique
 
 
 # ajout de la clé publique de télem à /home/pi/.ssh/authorized_keys
-popd
+cd /boot
+mkdir -p /home/pi/.ssh/
 cat id_rsa_domotik.pub >> /home/pi/.ssh/authorized_keys
 
 

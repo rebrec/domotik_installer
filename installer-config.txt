@@ -1,4 +1,4 @@
-packages=vim,openssh-server,fail2ban,raspi-copies-and-fills,rng-tools
+packages=vim,openssh-server,fail2ban,raspi-copies-and-fills,rng-tools,git,python-pip,python-virtualenv,supervisor,build-essential,python-dev,sudo
 hostname=dkbbox
 rootpw=neverusethispassword
 ip_addr=dhcp
