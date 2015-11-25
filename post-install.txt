@@ -1,34 +1,33 @@
 # Ajout de l'utilisateur pi / raspbian
-useradd -m -p raspbian -s /bin/bash pi
-adduser pi sudo
+chroot /rootfs useradd -m -p raspbian -s /bin/bash pi
+chroot /rootfs adduser pi sudo
 
 # configuration du module pour la generation de nombres aleatoires (necessite le paquet rng-tools)
-echo bcm2708-rng >> /etc/modules
+chroot /rootfs echo bcm2708-rng >> /etc/modules
 
 # installation des MAJ automatiques dans crontab
-echo "*/1 *	* * *	root	/bin/sh -c 'cd /home/pi/projets/domotik && /usr/bin/git pull origin master >> /tmp/update.log'" >> /etc/crontab
+echo "*/1 *	* * *	root	/bin/sh -c 'cd /home/pi/projets/domotik && /usr/bin/git pull origin master >> /tmp/update.log'" >> /rootfs/etc/crontab
 
 # installation du depot github
-mkdir -p /home/pi/projets
-cd /home/pi/projets/
-git clone https://github.com/rebrec/domotik.git
+chroot /rootfs mkdir -p /home/pi/projets
+chroot /rootfs /bin/sh -c 'cd /home/pi/projets/ && git clone https://github.com/rebrec/domotik.git'
+
 
 # configuration de domotik
-cd /home/pi/projets/domotik/install
-sh install-supervisor.sh silent root
-chmod +x post-merge
-cp post-merge ../.git/hooks/
+chroot /rootfs /bin/sh -c 'cd /home/pi/projets/domotik/install && sh install-supervisor.sh silent root'
+
+chroot /rootfs /bin/sh -c 'cd /home/pi/projets/domotik/install && chmod +x post-merge'
+chroot /rootfs /bin/sh -c 'cd /home/pi/projets/domotik/install && cp post-merge ../.git/hooks/'
 
 # copie du fichier généré domotik.conf dans /etc/supervisor/conf.d/
-cp domotik.conf /etc/supervisor/conf.d/
+chroot /rootfs /bin/sh -c 'cd /home/pi/projets/domotik/install && cp domotik.conf /etc/supervisor/conf.d/'
 
 
 # configuration de sshd_config pour n'autoriser qu'une auth par clé publique
 
 
 # ajout de la clé publique de télem à /home/pi/.ssh/authorized_keys
-cd /boot
-mkdir -p /home/pi/.ssh/
-cat id_rsa_domotik.pub >> /home/pi/.ssh/authorized_keys
+chroot /rootfs /bin/sh -c 'mkdir -p /home/pi/.ssh/'
+cat id_rsa_domotik.pub >> /rootfs/home/pi/.ssh/authorized_keys
 
 reboot
